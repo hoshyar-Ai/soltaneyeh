@@ -1,0 +1,6 @@
+{
+  "name": "راهنمای سلطانیه",
+  "description": "دستیار هوشمند گردشگری و میراث فرهنگی سلطانیه با قابلیت شناسایی تصویری آثار، گفت‌وگوی تاریخی و معرفی جاذبه‌های شاخص",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

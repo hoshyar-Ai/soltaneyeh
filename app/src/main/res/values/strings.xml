@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">راهنمای سلطانیه</string>
+    <string name="header_title">راهنمای هوشمند سلطانیه</string>
+    <string name="header_subtitle">دستیار هوشمند گردشگری، معماری ایلخانی و میراث جهانی یونسکو</string>
+    <string name="nav_explore">کاوش و جاذبه‌ها</string>
+    <string name="nav_identifier">شناساگر آثار</string>
+    <string name="nav_guide">راهنمای هوشمند</string>
+    <string name="audience_section_title">انتخاب سطح مخاطب</string>
+    <string name="audience_general_title">گردشگر عمومی</string>
+    <string name="audience_general_desc">زبان ساده و داستانی</string>
+    <string name="audience_researcher_title">دانشجو و پژوهشگر</string>
+    <string name="audience_researcher_desc">تخصصی و معماری</string>
+    <string name="audience_kids_title">کودک و نوجوان</string>
+    <string name="audience_kids_desc">کوتاه و جذاب</string>
+    <string name="attractions_section_title">جاذبه‌های شاخص سلطانیه</string>
+    <string name="identifier_title">شناساگر هوشمند آثار</string>
+    <string name="identifier_subtitle">عکسی از بنا، کاشی‌کاری، کتیبه یا نقوش تاریخی سلطانیه و ایران انتخاب کنید تا تحلیل دقیق آن را دریافت کنید.</string>
+    <string name="pick_from_gallery">انتخاب از گالری</string>
+    <string name="take_photo">گرفتن عکس</string>
+    <string name="analyze_image">تحلیل هوشمند اثر</string>
+    <string name="guide_title">گفت‌وگوی هوشمند با راهنمای تاریخی</string>
+    <string name="chat_input_hint">سوال خود را درباره سلطانیه بپرسید...</string>
+    <string name="camera_permission_denied">برای گرفتن عکس با دوربین، دسترسی دوربین مورد نیاز است. می‌توانید از گالری تصویر انتخاب کنید یا دسترسی را فعال نمایید.</string>
+    <string name="back">بازگشت</string>
+</resources>
