@@ -1,10 +1,10 @@
 {
-  "id": "/",
+  "id": "./",
   "name": "راهنمای هوشمند سلطانیه",
   "short_name": "سلطانیه",
   "description": "دستیار هوشمند گردشگری و میراث فرهنگی سلطانیه با قابلیت شناسایی تصویری آثار، گفت‌وگوی تاریخی و معرفی جاذبه‌های شاخص",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0b2424",
@@ -13,13 +13,13 @@
   "lang": "fa",
   "icons": [
     {
-      "src": "/icons/icon-512x512.png",
+      "src": "./icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/icon-512x512.png",
+      "src": "./icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
