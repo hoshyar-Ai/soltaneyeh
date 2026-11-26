@@ -2,68 +2,1454 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#0b2424" />
-  <meta name="description" content="دستیار هوشمند گردشگری و میراث فرهنگی سلطانیه" />
+  <meta name="description" content="دستیار هوشمند گردشگری و میراث فرهنگی سلطانیه — کاملاً آفلاین و متصل به هوش مصنوعی" />
   <title>راهنمای هوشمند سلطانیه</title>
   <link rel="manifest" href="./manifest.json" />
   <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512x512.png" />
   <link rel="apple-touch-icon" href="./icons/icon-512x512.png" />
   <style>
-    body {
+    @font-face {
+      font-family: 'Vazirmatn';
+      src: url('./fonts/vazirmatn.ttf') format('truetype');
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --bg: #faf6ee;
+      --surface: #fffdf9;
+      --surface-muted: #f0e8d7;
+      --border: #e0d5bf;
+      --teal-dark: #073a44;
+      --teal: #0a4f5c;
+      --teal-rich: #0e6b7b;
+      --teal-soft: #d5ecef;
+      --gold: #c49232;
+      --gold-bright: #e0b862;
+      --gold-soft: #f6e9cc;
+      --ink: #172325;
+      --muted: #526265;
+      --welcome-bg: #0b2424;
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background-color: #0b2424;
-      color: #faf6ee;
+      padding: 0;
       direction: rtl;
       text-align: right;
+      font-family: 'Vazirmatn', 'Vazir', 'Tahoma', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
       min-height: 100vh;
+    }
+
+    input, textarea, select, button, [contenteditable] {
+      font-family: inherit;
+    }
+
+    input:not([data-ltr="true"]), textarea, [contenteditable] {
+      direction: rtl;
+      text-align: right;
+    }
+
+    input[data-ltr="true"] {
+      direction: ltr;
+      text-align: left;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Welcome Screen (Immediate, non-blocking, clear CTA) */
+    .welcome-screen {
+      min-height: 100vh;
+      background: radial-gradient(circle at top right, rgba(224, 184, 98, 0.16), transparent 45%),
+                  linear-gradient(160deg, #073a44 0%, #0b2424 65%, #071b1b 100%);
+      color: #faf6ee;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 24px;
-      box-sizing: border-box;
+      padding: 20px;
     }
-    main {
-      max-width: 480px;
+
+    .welcome-card {
       width: 100%;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(224, 184, 98, 0.35);
+      max-width: 460px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(224, 184, 98, 0.45);
+      border-radius: 24px;
+      padding: 28px 22px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+      text-align: center;
+    }
+
+    .welcome-logo {
+      width: 88px;
+      height: 88px;
+      border-radius: 22px;
+      object-fit: cover;
+      border: 2px solid var(--gold-bright);
+      margin-bottom: 14px;
+      background: #105a63;
+    }
+
+    .welcome-badge {
+      display: inline-block;
+      font-size: 12px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgba(224, 184, 98, 0.16);
+      border: 1px solid rgba(224, 184, 98, 0.55);
+      color: var(--gold-bright);
+      margin-bottom: 12px;
+    }
+
+    .welcome-card h1 {
+      margin: 0 0 10px;
+      font-size: 24px;
+      color: #fffdf9;
+    }
+
+    .welcome-card p {
+      margin: 0 0 20px;
+      font-size: 14px;
+      line-height: 1.85;
+      color: #dbe9eb;
+    }
+
+    .btn-enter {
+      width: 100%;
+      min-height: 52px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      color: #1c1606;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 12px 18px;
+      box-shadow: 0 8px 22px rgba(196, 146, 50, 0.32);
+      transition: transform 0.15s ease;
+    }
+
+    .btn-enter:active {
+      transform: scale(0.98);
+    }
+
+    .welcome-offline-note {
+      margin-top: 14px;
+      font-size: 12px;
+      color: #b7cfd3;
+    }
+
+    /* Main App Shell */
+    .app-shell {
+      max-width: 720px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 78px;
+    }
+
+    .top-header {
+      background: linear-gradient(155deg, var(--teal-dark), var(--teal), var(--teal-rich));
+      color: #fffdf9;
+      padding: 18px 16px 22px;
+      border-bottom: 3px solid var(--gold);
+    }
+
+    .header-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(224, 184, 98, 0.65);
+      color: #faf6ee;
+    }
+
+    .header-btn-group {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .header-chip-btn {
+      min-height: 36px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.14);
+      color: #faf6ee;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .top-header h2 {
+      margin: 0 0 6px;
+      font-size: 22px;
+    }
+
+    .top-header p {
+      margin: 0;
+      font-size: 13px;
+      color: #dcebee;
+      line-height: 1.7;
+    }
+
+    .container {
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: 0 2px 10px rgba(10, 79, 92, 0.05);
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--teal);
+      margin: 0 0 10px;
+    }
+
+    /* Audience Selector */
+    .audience-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .audience-btn {
+      min-height: 58px;
+      padding: 8px 6px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--ink);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 3px;
+    }
+
+    .audience-btn.active {
+      background: var(--teal-soft);
+      border-color: var(--teal);
+      color: var(--teal-dark);
+      font-weight: 700;
+    }
+
+    .audience-sub {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    /* Attraction Cards */
+    .attraction-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 24px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 3px 12px rgba(7, 58, 68, 0.06);
     }
-    h1 {
+
+    .attraction-media {
+      position: relative;
+      height: 185px;
+      background: var(--teal-dark);
+    }
+
+    .attraction-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .attraction-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(7, 25, 29, 0.85) 0%, rgba(0, 0, 0, 0.1) 60%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px;
+      color: #fff;
+    }
+
+    .era-tag {
+      align-self: flex-start;
+      background: rgba(7, 58, 68, 0.88);
+      border: 1px solid rgba(224, 184, 98, 0.7);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      color: #faf6ee;
+    }
+
+    .attraction-body {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .attraction-body p {
+      margin: 0;
+      font-size: 13.5px;
+      line-height: 1.75;
+    }
+
+    .tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag-chip {
+      background: var(--surface-muted);
+      color: var(--muted);
+      padding: 4px 9px;
+      border-radius: 8px;
+      font-size: 11px;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .meta-text {
+      font-size: 11.5px;
+      color: var(--muted);
+    }
+
+    .primary-btn {
+      min-height: 44px;
+      border: none;
+      border-radius: 12px;
+      background: var(--teal);
+      color: #fff;
+      font-size: 13.5px;
+      font-weight: 700;
+      padding: 10px 16px;
+      cursor: pointer;
+    }
+
+    .primary-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .outline-btn {
+      min-height: 44px;
+      border: 1.2px solid var(--teal);
+      border-radius: 12px;
+      background: transparent;
+      color: var(--teal);
+      font-size: 13.5px;
+      font-weight: 600;
+      padding: 9px 14px;
+      cursor: pointer;
+    }
+
+    /* Identifier & Chat Inputs */
+    .field-input {
+      width: 100%;
+      min-height: 46px;
+      border: 1.2px solid var(--border);
+      border-radius: 13px;
+      padding: 10px 12px;
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .field-input:focus {
+      outline: 2px solid rgba(10, 79, 92, 0.25);
+      border-color: var(--teal);
+    }
+
+    .preview-img {
+      width: 100%;
+      max-height: 260px;
+      object-fit: cover;
+      border-radius: 14px;
+      display: block;
+    }
+
+    .notice-box {
+      background: var(--gold-soft);
+      border: 1px solid rgba(196, 146, 50, 0.55);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 12.5px;
+      line-height: 1.75;
+      color: #3e2b05;
+    }
+
+    .markdown-output h3 {
+      color: var(--teal);
+      font-size: 15px;
+      margin: 12px 0 6px;
+    }
+
+    .markdown-output h3:first-child {
       margin-top: 0;
-      color: #e0b862;
-      font-size: 1.5rem;
     }
-    p {
+
+    .markdown-output ul {
+      margin: 4px 0 10px;
+      padding-right: 18px;
+    }
+
+    .markdown-output li {
+      margin-bottom: 5px;
       line-height: 1.8;
-      color: #e2ecee;
-      margin-bottom: 0;
+      font-size: 13.5px;
+    }
+
+    .markdown-output p {
+      margin: 6px 0;
+      line-height: 1.8;
+      font-size: 13.5px;
+    }
+
+    /* Chat */
+    .suggestions-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .suggestion-chip {
+      flex: 0 0 auto;
+      min-height: 40px;
+      padding: 8px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(10, 79, 92, 0.35);
+      background: var(--surface);
+      color: var(--teal);
+      font-size: 12.5px;
+      cursor: pointer;
+    }
+
+    .chat-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .chat-bubble {
+      max-width: 90%;
+      padding: 11px 14px;
+      border-radius: 16px;
+      font-size: 13.5px;
+      line-height: 1.8;
+    }
+
+    .chat-user {
+      align-self: flex-start;
+      background: var(--teal);
+      color: #fff;
+      border-top-right-radius: 4px;
+    }
+
+    .chat-bot {
+      align-self: flex-end;
+      background: var(--surface);
+      border: 1px solid rgba(196, 146, 50, 0.5);
+      border-top-left-radius: 4px;
+    }
+
+    .chat-compose {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+      z-index: 30;
+    }
+
+    .bottom-nav-inner {
+      width: 100%;
+      max-width: 720px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .nav-item {
+      min-height: 62px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .nav-item.active {
+      color: var(--teal);
+      background: rgba(10, 79, 92, 0.08);
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(7, 25, 29, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 50;
+    }
+
+    .modal-card {
+      width: 100%;
+      max-width: 560px;
+      max-height: 88vh;
+      overflow-y: auto;
+      background: var(--surface);
+      border-radius: 22px;
+      border: 1px solid var(--gold);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      color: var(--teal);
+      font-size: 17px;
+    }
+
+    @media (max-width: 440px) {
+      .audience-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-  <main>
-    <h1>راهنمای هوشمند سلطانیه</h1>
-    <p>دستیار هوشمند گردشگری و میراث فرهنگی سلطانیه آماده ارائه خدمات به صورت آفلاین و آنلاین است.</p>
-  </main>
+
+  <!-- Immediate Welcome Screen with clear entry button (no network wait) -->
+  <section id="welcome-screen" class="welcome-screen" aria-label="صفحه خوشامدگویی">
+    <div class="welcome-card">
+      <img src="./icons/icon-512x512.png" alt="نماد گنبد سلطانیه" class="welcome-logo" onerror="this.style.display='none'" />
+      <div class="welcome-badge">میراث جهانی یونسکو • آماده به‌صورت آفلاین</div>
+      <h1>راهنمای هوشمند سلطانیه</h1>
+      <p>
+        دستیار هوشمند گردشگری و میراث فرهنگی سلطانیه برای شناخت بناهای تاریخی، تحلیل تصویر آثار و گفت‌وگو با راهنمای تاریخی. تمامی اطلاعات اصلی به‌صورت محلی و بدون نیاز به فیلترشکن در دسترس هستند.
+      </p>
+      <button id="enter-app-btn" type="button" class="btn-enter">
+        شروع / ورود به راهنما
+      </button>
+      <div class="welcome-offline-note">
+        ورود فوری با پایگاه داده محلی • پشتیبانی از هوش مصنوعی OpenAI
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Mobile-First RTL Application -->
+  <div id="app-shell" class="app-shell hidden">
+    <header class="top-header">
+      <div class="header-actions">
+        <span class="pill-badge">میراث جهانی یونسکو • زنجان</span>
+        <div class="header-btn-group">
+          <button id="open-typing-test-btn" type="button" class="header-chip-btn">تست تایپ فارسی</button>
+          <button id="open-settings-btn" type="button" class="header-chip-btn">تنظیمات OpenAI</button>
+        </div>
+      </div>
+      <h2>راهنمای هوشمند سلطانیه</h2>
+      <p>کاوش در بزرگ‌ترین گنبد آجری جهان، آثار ایلخانی، شناساگر تصویری و گفت‌وگو با راهنمای تاریخی</p>
+    </header>
+
+    <!-- TAB 1: EXPLORE -->
+    <main id="tab-explore" class="container">
+      <section class="card">
+        <h3 class="section-title">انتخاب سطح مخاطب (تنظیم لحن توضیحات)</h3>
+        <div id="audience-selector" class="audience-grid"></div>
+      </section>
+
+      <section>
+        <h3 class="section-title" style="margin-bottom: 10px;">جاذبه‌های شاخص سلطانیه (۴ اثر برگزیده)</h3>
+        <div id="attractions-list" style="display: flex; flex-direction: column; gap: 14px;"></div>
+      </section>
+    </main>
+
+    <!-- TAB 2: IDENTIFIER -->
+    <main id="tab-identifier" class="container hidden">
+      <section class="card">
+        <h3 class="section-title">شناساگر هوشمند آثار (تحلیل تصویر)</h3>
+        <p style="margin: 0 0 12px; font-size: 13px; color: var(--muted); line-height: 1.7;">
+          عکسی از بنا، کاشی‌کاری، کتیبه یا نقوش تاریخی سلطانیه انتخاب یا ثبت کنید. در صورت نبود اینترنت یا کلید OpenAI، راهنمای تطبیقی محلی فوراً نمایش داده می‌شود.
+        </p>
+
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+          <label class="outline-btn" style="flex: 1; text-align: center; display: inline-flex; align-items: center; justify-content: center;">
+            انتخاب عکس از گالری / فایل
+            <input id="image-file-input" type="file" accept="image/*" class="hidden" />
+          </label>
+          <label class="primary-btn" style="flex: 1; text-align: center; display: inline-flex; align-items: center; justify-content: center;">
+            گرفتن عکس با دوربین
+            <input id="image-camera-input" type="file" accept="image/*" capture="environment" class="hidden" />
+          </label>
+        </div>
+
+        <div id="image-preview-wrap" class="hidden" style="display: flex; flex-direction: column; gap: 10px;">
+          <img id="image-preview" class="preview-img" alt="پیش‌نمایش تصویر انتخاب‌شده" />
+          <textarea id="image-note-input" class="field-input" rows="2" placeholder="سوال یا توضیح اختیاری (مثلاً: این کاشیکاری یا کتیبه مربوط به چه دوره‌ای است؟)"></textarea>
+          <div style="display: flex; gap: 8px;">
+            <button id="analyze-image-btn" type="button" class="primary-btn" style="flex: 1;">تحلیل هوشمند تصویر</button>
+            <button id="clear-image-btn" type="button" class="outline-btn">حذف</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="analysis-result-card" class="card hidden"></section>
+    </main>
+
+    <!-- TAB 3: GUIDE CHAT -->
+    <main id="tab-guide" class="container hidden">
+      <section class="card" style="padding: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span style="font-size: 13px; font-weight: 700; color: var(--teal);">پیشنهاد سوال سریع</span>
+          <button id="reset-chat-btn" type="button" class="outline-btn" style="min-height: 34px; padding: 4px 10px; font-size: 12px;">گفت‌وگوی جدید</button>
+        </div>
+        <div id="quick-suggestions" class="suggestions-scroll"></div>
+      </section>
+
+      <section id="chat-messages" class="chat-list"></section>
+
+      <section class="card" style="padding: 10px;">
+        <div class="chat-compose">
+          <textarea id="chat-input" class="field-input" rows="2" placeholder="سوال خود را درباره تاریخ، معماری یا مسیر بازدید سلطانیه بنویسید..."></textarea>
+          <button id="send-chat-btn" type="button" class="primary-btn">ارسال</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav id="bottom-nav" class="bottom-nav hidden" aria-label="منوی اصلی">
+    <div class="bottom-nav-inner">
+      <button type="button" class="nav-item active" data-tab="explore">جاذبه‌ها</button>
+      <button type="button" class="nav-item" data-tab="identifier">شناساگر آثار</button>
+      <button type="button" class="nav-item" data-tab="guide">گفت‌وگو با راهنما</button>
+    </div>
+  </nav>
+
+  <!-- Attraction Detail Modal -->
+  <div id="detail-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="detail-title"></h3>
+        <button id="close-detail-btn" type="button" class="outline-btn" style="min-height: 36px; padding: 4px 12px;">بستن</button>
+      </div>
+      <img id="detail-image" class="preview-img" alt="" />
+      <div id="detail-meta" class="meta-text"></div>
+      <div id="detail-notice" class="notice-box hidden"></div>
+      <div id="detail-content" class="markdown-output"></div>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button id="detail-ai-btn" type="button" class="outline-btn" style="flex: 1;">تکمیل با هوش مصنوعی OpenAI</button>
+        <button id="detail-ask-btn" type="button" class="primary-btn" style="flex: 1;">پرسش از راهنما</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OpenAI Settings Modal -->
+  <div id="settings-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>تنظیمات اتصال به OpenAI</h3>
+        <button id="close-settings-btn" type="button" class="outline-btn" style="min-height: 36px; padding: 4px 12px;">بستن</button>
+      </div>
+      <div class="notice-box">
+        سرویس: <strong>https://api.openai.com/v1/chat/completions</strong> • مدل: <strong>gpt-4o-mini</strong><br />
+        کلید در مرورگر شما به‌صورت موقت ذخیره می‌شود. در صورت نبود کلید یا محدودیت شبکه، برنامه بدون خطا از دانشنامه محلی استفاده می‌کند.
+      </div>
+      <input id="openai-key-input" type="password" data-ltr="true" class="field-input" placeholder="sk-..." />
+      <div style="display: flex; gap: 8px; justify-content: flex-end;">
+        <button id="clear-key-btn" type="button" class="outline-btn">حذف کلید</button>
+        <button id="save-key-btn" type="button" class="primary-btn">ذخیره موقت</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Persian Typing Test Modal -->
+  <div id="typing-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>تست تایپ و نمایش فارسی</h3>
+        <button id="close-typing-btn" type="button" class="outline-btn" style="min-height: 36px; padding: 4px 12px;">بستن</button>
+      </div>
+      <p style="margin: 0; font-size: 13px; color: var(--muted); line-height: 1.7;">
+        تایپ مستقیم حروف فارسی (پ، چ، ژ، گ، ک، ی، نیم‌فاصله و اعداد) را با راست‌چین کامل و فونت محلی Vazirmatn آزمایش کنید:
+      </p>
+      <textarea id="typing-test-input" class="field-input" rows="3" placeholder="اینجا به فارسی تایپ کنید..."></textarea>
+      <div id="typing-preview" style="font-size: 13px; color: var(--teal); min-height: 22px;"></div>
+      <div style="display: flex; gap: 8px;">
+        <button id="insert-sample-fa-btn" type="button" class="outline-btn" style="flex: 1;">درج جمله نمونه (پ چ ژ گ ک ی)</button>
+        <button id="use-in-chat-btn" type="button" class="primary-btn">انتقال به گفتگو</button>
+      </div>
+    </div>
+  </div>
 
   <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function () {
+    (function () {
+      const OPENAI_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
+      const OPENAI_MODEL = 'gpt-4o-mini';
+      const STORAGE_KEY_API = 'soltaniyeh_openai_key';
+      const STORAGE_KEY_AUDIENCE = 'soltaniyeh_audience_level';
+
+      const AUDIENCES = [
+        { id: 'general', title: 'گردشگر عمومی', subtitle: 'زبان ساده و داستانی', directive: 'با لحنی گرم، روان، داستانی و قابل فهم برای گردشگران عمومی بنویس.' },
+        { id: 'researcher', title: 'دانشجو و پژوهشگر', subtitle: 'تخصصی و معماری', directive: 'با ادبیات علمی، معماری و باستان‌شناسی دقیق (ذکر سازه، قوس‌ها و لایه‌های تزئیناتی) بنویس.' },
+        { id: 'kids_teens', title: 'کودک و نوجوان', subtitle: 'کوتاه و جذاب', directive: 'با جملات کوتاه، پرانرژی، قابل تصور و جذاب برای کودکان و نوجوانان بنویس.' }
+      ];
+
+      // Embedded 100% offline local knowledge base (works immediately without any fetch/network)
+      let LOCAL_DB = {
+        attractions: [
+          {
+            id: 'soltaniyeh_dome',
+            title: 'گنبد سلطانیه',
+            subtitle: 'آرامگاه سلطان محمد خدابنده (اولجایتو) • ثبت جهانی یونسکو',
+            era: 'دوره ایلخانی (۷۰۴ تا ۷۱۲ هـ.ق)',
+            shortDescription: 'بزرگ‌ترین گنبد آجری جهان و شاهکار معماری ایرانی-اسلامی با گنبد فیروزه‌ای دوپوسته و هشت مناره پیرامونی.',
+            visitingDuration: '۶۰ تا ۹۰ دقیقه',
+            locationNote: 'مرکز شهر تاریخی سلطانیه، استان زنجان',
+            imagePath: './images/img_soltaniyeh_dome.jpg',
+            quickTags: ['میراث یونسکو', 'بزرگ‌ترین گنبد آجری', 'معماری ایلخانی'],
+            suggestedQuestion: 'راز پایداری و شیوه ساخت گنبد دوپوسته سلطانیه و تزئینات داخل آن چیست؟',
+            guides: {
+              general: '### معرفی و پیشینه تاریخی\nگنبد سلطانیه در سال‌های ۷۰۴ تا ۷۱۲ هـ.ق به فرمان سلطان محمد خدابنده (اولجایتو) ساخته شد و بزرگ‌ترین گنبد آجری جهان است.\n\n### شاخصه‌های معماری و هنری\n- **گنبد فیروزه‌ای دوپوسته:** ارتفاع حدود ۴۸٫۵ متر و دهانه نزدیک به ۲۵٫۵ متر با کاشیکاری فیروزه‌ای.\n- **هشت مناره و رواق‌های سه‌طبقه:** دید بی‌نظیر به دشت سلطانیه و انتقال هوشمندانه نور.\n\n### نکات طلایی بازدید و عکاسی\n- بهترین زمان عکاسی ساعات طلایی صبح یا پیش از غروب آفتاب است.',
+              researcher: '### معرفی و پیشینه تاریخی\nآرامگاه اولجایتو (۷۰۴–۷۱۲ هـ.ق / ۱۳۰۵–۱۳۱۳ م) نقطه عطف گذار از شیوه رازی به شیوه آذری در معماری ایران است.\n\n### شاخصه‌های معماری و هنری\n- **سازه دوپوسته پیوسته:** پوسته بیرونی با ضخامت کمتر روی دنده‌ها و شبکه‌های آجری استوار شده است.\n- **لایه نگاری تزئینات:** فاز اول آجر و کاشی معقلی فیروزه‌ای و فاز دوم گچ‌بری استوکو و کتیبه‌های ثلث و کوفی.\n\n### نکات میدانی\n- تفاوت مقطع قوس‌ها و محل تلاقی فاز نخست و دوم تزئینات را در جرزهای داخلی بررسی کنید.',
+              kids_teens: '### معرفی و پیشینه تاریخی\nبیش از ۷۰۰ سال پیش پادشاهی به نام اولجایتو بزرگ‌ترین گنبد آجری دنیا را وسط دشت سرسبز سلطانیه ساخت!\n\n### ویژگی‌های شگفت‌انگیز\n- **ارتفاعی اندازه یک برج ۱۵ طبقه!**\n- **سقف دو لایه:** تا هم سبک‌تر باشد و هم در برابر زلزله محکم بماند.'
+            }
+          },
+          {
+            id: 'dashkasan_temple',
+            title: 'معبد داش‌کسن (اژدهای سنگی)',
+            subtitle: 'مجموعه صخره‌ای و نقوش برجسته اژدهای ایلخانی',
+            era: 'اوایل قرن هشتم هجری (دوره ایلخانی)',
+            shortDescription: 'معبدی تراشیده در دل صخره با دو نقش‌برجسته کم‌نظیر از اژدهای سبک چینی در کنار محراب‌ها و نقوش اسلیمی ایرانی.',
+            visitingDuration: '۴۵ تا ۶۰ دقیقه',
+            locationNote: 'حدود ۱۰ کیلومتری جنوب‌شرقی سلطانیه (روستای ویر)',
+            imagePath: './images/img_dashkasan_temple.jpg',
+            quickTags: ['معماری صخره‌ای', 'نقش اژدها', 'پیوند هنر ایران و شرق آسیا'],
+            suggestedQuestion: 'چرا در معبد داش‌کسن سلطانیه نقش اژدهای چینی در کنار مقرنس و اسلیمی ایرانی دیده می‌شود؟',
+            guides: {
+              general: '### معرفی و پیشینه تاریخی\nمعبد صخره‌ای داش‌کسن در نزدیکی روستای ویر، یکی از نادرترین آثار پیوند هنر ایران و شرق آسیا در عصر ایلخانی است.\n\n### شاخصه‌های معماری\n- **دو نقش اژدهای سنگی:** تراشیده در دل سنگ آهکی در کنار محراب‌ها و مقرنس‌کاری‌های ایرانی.',
+              researcher: '### معرفی و پیشینه تاریخی\nمجموعه صخره‌ای داش‌کسن (اوایل سده هشتم هـ.ق) هم‌نشینی ایکونوگرافی اژدهای یوان-چینی را با طاق جناغی و اسلیمی ایرانی نشان می‌دهد.',
+              kids_teens: '### معرفی و پیشینه تاریخی\nاینجا کل دیوارهای حیاط را از دل کوه تراشیده‌اند و روی سنگ‌ها دو اژدهای غول‌پیکر حکاکی شده است!'
+            }
+          },
+          {
+            id: 'chelebi_oghli',
+            title: 'آرامگاه و خانقاه چلبی‌اوغلی',
+            subtitle: 'برج آرامگاهی هشت‌ضلعی و مجموعه عرفانی قرن هشتم',
+            era: 'حدود ۷۱۰ تا ۷۳۳ هـ.ق (دوره ایلخانی)',
+            shortDescription: 'بنای آرامگاهی شیخ براق و چلبی‌اوغلی با گنبد رک هرمی، تزئینات آجری، کاشی‌های فیروزه‌ای و حجرات خانقاه.',
+            visitingDuration: '۳۰ تا ۴۵ دقیقه',
+            locationNote: 'ضلع جنوب‌غربی گنبد سلطانیه',
+            imagePath: './images/img_chelebi_oghli.jpg',
+            quickTags: ['برج آرامگاهی', 'خانقاه تاریخی', 'کاشیکاری معقلی'],
+            suggestedQuestion: 'چلبی‌اوغلی چه کسی بود و ویژگی‌های معماری خانقاه و برج آرامگاهی او چیست؟',
+            guides: {
+              general: '### معرفی و پیشینه تاریخی\nمجموعه آرامگاه و خانقاه چلبی‌اوغلی در فاصله پیاده کوتاهی در جنوب‌غربی گنبد سلطانیه قرار دارد.\n\n### شاخصه‌های معماری\n- **برج هشت‌ضلعی با گنبد رک هرمی** و نوار کاشی فیروزه‌ای به همراه صحن خانقاه.',
+              researcher: '### مشخصات معماری\nتلفیق گونه‌شناسی برج آرامگاهی هشت‌ضلعی شمال‌غرب ایران با صحن و حجرات خانقاه سده هشتم هجری.',
+              kids_teens: '### برج هرمی چلبی‌اوغلی\nکنار گنبد گرد سلطانیه، یک برج آجری هشت‌گوش با کلاه هرمی نوک‌تیز و کاشی‌های فیروزه‌ای وجود دارد.'
+            }
+          },
+          {
+            id: 'soltaniyeh_complex',
+            title: 'مجموعه تاریخی و ارگ سلطانیه',
+            subtitle: 'محوطه باستان‌شناسی پایتخت ایلخانی و حصار شهر قدیم',
+            era: 'سده هشتم هجری به بعد',
+            shortDescription: 'گستره شهر باستانی سلطانیه شامل بقایای بارو، خندق، ایوان‌ها و ابنیه پیرامون گنبد که شکوه پایتخت اولجایتو را بازمی‌تاباند.',
+            visitingDuration: '۴۵ تا ۶۰ دقیقه',
+            locationNote: 'محوطه پیرامونی گنبد و دشت سلطانیه',
+            imagePath: './images/img_soltaniyeh_complex.jpg',
+            quickTags: ['محوطه باستان‌شناسی', 'پایتخت ایلخانی', 'بافت تاریخی'],
+            suggestedQuestion: 'شهر سلطانیه در دوره ایلخانی چه ساختار شهری و بناهای پیرامونی داشته است؟',
+            guides: {
+              general: '### معرفی و پیشینه تاریخی\nسلطانیه پایتخت باشکوه ایلخانان با کاخ‌ها، مراکز علمی، بازارها و دیوارهای دفاعی پیرامون گنبد بوده است.',
+              researcher: '### شهرسازی ایلخانی\nمحوطه ارگ سلطانیه شامل باروهای سنگی-آجری، خندق پیرامونی، شبکه‌های آبرسانی سفالین و ابواب‌البر بوده است.',
+              kids_teens: '### شهر پنهان زیر دشت\nدور تا دور گنبد زمانی شهری پر از بازار، مدرسه و خندق قلعه بوده که امروز بقایای آن را می‌توانید ببینید.'
+            }
+          }
+        ],
+        faqs: [
+          {
+            question: 'تاریخچه گنبد سلطانیه چیست؟',
+            keywords: ['تاریخچه', 'گنبد', 'سلطانیه', 'اولجایتو', 'خدابنده', 'یونسکو', 'ساخت'],
+            answers: {
+              general: '**تاریخچه گنبد سلطانیه**\n- ساخت این بنا در سال **۷۰۴ هجری قمری** به فرمان **سلطان محمد خدابنده (اولجایتو)** آغاز و حدود **۷۱۲ هـ.ق** تکمیل شد.\n- گنبد سلطانیه به عنوان **بزرگ‌ترین گنبد آجری جهان** در سال ۲۰۰۵ در فهرست میراث جهانی یونسکو ثبت شده است.',
+              researcher: '**پیشینه تاریخی گنبد سلطانیه**\n- احداث در سال‌های ۷۰۴–۷۱۲ هـ.ق (۱۳۰۵–۱۳۱۳ م) هم‌زمان با توسعه پایتخت اولجایتو؛ دارای دو فاز تزئیناتی متمایز و پل ارتباطی شیوه رازی به آذری.',
+              kids_teens: '**داستان ساخت گنبد سلطانیه**\n- بیش از ۷۰۰ سال پیش پادشاهی به نام اولجایتو بزرگ‌ترین گنبد آجری دنیا را وسط دشت سلطانیه ساخت که امروز جزو گنجینه‌های جهانی یونسکوست.'
+            }
+          },
+          {
+            question: 'ویژگی‌های معماری ایلخانی این بنا کدامند؟',
+            keywords: ['معماری', 'ایلخانی', 'ویژگی', 'دوپوسته', 'آجری', 'مناره', 'سازه'],
+            answers: {
+              general: '**ویژگی‌های معماری ایلخانی**\n- ارتفاع حدود **۴۸٫۵ متر** و دهانه **۲۵٫۵ متر**.\n- **گنبد دوپوسته آجری** برای سبکی و پایداری در برابر زلزله.\n- پلان هشت‌ضلعی، هشت مناره پیرامونی و رواق‌های سه‌طبقه.',
+              researcher: '**مؤلفه‌های شیوه آذری در سلطانیه**\n- ساختار دوپوسته پیوسته بدون شمع‌بندی چوبی گسترده، پلان هشت‌گوش متقارن، فیلپوش‌ها و کلاف‌بندی پیرامونی همراه با کاشی معقلی فیروزه‌ای.',
+              kids_teens: '**شاهکار معماری سلطانیه**\n- سقف گنبد مثل یک کلاه ایمنی دو لایه است تا سبک و خیلی محکم باشد و دور تا دورش هشت مناره مثل تاج قرار دارند!'
+            }
+          },
+          {
+            question: 'بهترین مسیر بازدید از آثار سلطانیه چیست؟',
+            keywords: ['مسیر', 'بازدید', 'بهترین', 'ترتیب', 'برنامه', 'گردش'],
+            answers: {
+              general: '**بهترین مسیر بازدید**\n- **ایستگاه ۱ (صبح):** گنبد سلطانیه و ارگ پیرامونی (۱٫۵ ساعت).\n- **ایستگاه ۲:** پیاده‌روی کوتاه به آرامگاه و خانقاه چلبی‌اوغلی در ضلع جنوب‌غربی.\n- **ایستگاه ۳:** حرکت حدود ۱۰ کیلومتر به سمت جنوب‌شرق برای بازدید از معبد صخره‌ای داش‌کسن.',
+              researcher: '**مسیر بازدید مطالعاتی**\n- گام ۱: بررسی بارو، خندق و دو فاز تزئینات گنبد سلطانیه؛ گام ۲: مقایسه گونه‌شناسی برج رک چلبی‌اوغلی؛ گام ۳: بررسی حجاری صخره‌ای داش‌کسن.',
+              kids_teens: '**نقشه گنج سلطانیه**\n- اول گنبد بزرگ فیروزه‌ای، بعد برج هرمی چلبی‌اوغلی و در آخر معبد داش‌کسن با اژدهاهای سنگی!'
+            }
+          },
+          {
+            question: 'تزئینات کاشیکاری و گچ‌بری گنبد چگونه است؟',
+            keywords: ['کاشی', 'کاشیکاری', 'گچ', 'گچبری', 'کتیبه', 'فیروزه', 'تزئینات'],
+            answers: {
+              general: '**تزئینات گنبد سلطانیه**\n- نمای بیرونی با کاشی‌های فیروزه‌ای و آجر-کاشی معقلی پوشیده شده و در فضای داخلی دو لایه آجر/کاشی فیروزه‌ای و گچ‌بری‌های رنگ‌آمیزی‌شده قرار دارد.',
+              researcher: '**دو فاز تزئینات داخلی**\n- فاز اول: آجرچینی و کاشی معقلی فیروزه‌ای و لاجوردی؛ فاز دوم: اندود استوکو، اسلیمی، رنگ‌آمیزی لاجوردی-طلایی و کتیبه‌های ثلث و کوفی.',
+              kids_teens: '**رنگ‌های گنبد**\n- از بیرون مثل تکه‌ای از آسمان فیروزه‌ای است و داخلش هم کاشی‌های آبی و گچ‌بری‌های طلایی زیبا دارد.'
+            }
+          }
+        ],
+        visionOfflineGuide: {
+          general: '### راهنمای آفلاین تشخیص آثار سلطانیه\n- **گنبد فیروزه‌ای و پلان هشت‌ضلعی بلند:** گنبد سلطانیه (دوره ایلخانی).\n- **نقش اژدها یا حجاری در دل صخره:** معبد داش‌کسن.\n- **برج آجری هشت‌ضلعی با سقف هرمی:** آرامگاه چلبی‌اوغلی.',
+          researcher: '### راهنمای تطبیقی آفلاین\n- **کاشیکاری معقلی و گنبد دوپوسته:** گنبد سلطانیه.\n- **حجاری صخره‌ای با موتيف اژدهای یوان:** داش‌کسن.\n- **برج آرامگاهی رک هشت‌وجهی:** چلبی‌اوغلی.',
+          kids_teens: '### راهنمای سریع آفلاین\n- **گنبد خیلی بزرگ آبی و فیروزه‌ای** = گنبد سلطانیه\n- **اژدهای سنگی در کوه** = معبد داش‌کسن\n- **برج با سقف هرمی** = آرامگاه چلبی‌اوغلی'
+        }
+      };
+
+      // Non-blocking background sync with soltaniyeh_knowledge.json (never delays UI!)
+      try {
+        fetch('./soltaniyeh_knowledge.json')
+          .then((res) => (res.ok ? res.json() : null))
+          .then((json) => {
+            if (json && Array.isArray(json.attractions) && Array.isArray(json.faqs)) {
+              const imageMap = {
+                img_soltaniyeh_dome: './images/img_soltaniyeh_dome.jpg',
+                img_dashkasan_temple: './images/img_dashkasan_temple.jpg',
+                img_chelebi_oghli: './images/img_chelebi_oghli.jpg',
+                img_soltaniyeh_complex: './images/img_soltaniyeh_complex.jpg'
+              };
+              LOCAL_DB = {
+                attractions: json.attractions.map((a) => ({
+                  ...a,
+                  imagePath: imageMap[a.imageKey] || './images/img_soltaniyeh_dome.jpg'
+                })),
+                faqs: json.faqs,
+                visionOfflineGuide: json.visionOfflineGuide || LOCAL_DB.visionOfflineGuide
+              };
+              renderAttractions();
+              renderQuickSuggestions();
+            }
+          })
+          .catch(() => {});
+      } catch (_) {}
+
+      let state = {
+        audience: localStorage.getItem(STORAGE_KEY_AUDIENCE) || 'general',
+        activeTab: 'explore',
+        selectedAttraction: null,
+        selectedImageDataUrl: '',
+        isStreamingChat: false,
+        chatMessages: [
+          {
+            isUser: false,
+            text: 'سلام! من راهنمای هوشمند میراث فرهنگی سلطانیه هستم. می‌توانید درباره تاریخچه گنبد سلطانیه، معماری ایلخانی، معبد داش‌کسن یا بهترین مسیر بازدید بپرسید. در صورت نبود اینترنت یا فیلترشکن نیز پاسخ‌های دانشنامه محلی در دسترس است.',
+            isOffline: false
+          }
+        ]
+      };
+
+      const welcomeEl = document.getElementById('welcome-screen');
+      const appShellEl = document.getElementById('app-shell');
+      const bottomNavEl = document.getElementById('bottom-nav');
+
+      function enterApp() {
+        welcomeEl.classList.add('hidden');
+        appShellEl.classList.remove('hidden');
+        bottomNavEl.classList.remove('hidden');
+      }
+
+      document.getElementById('enter-app-btn').addEventListener('click', enterApp);
+
+      function getApiKey() {
+        return (localStorage.getItem(STORAGE_KEY_API) || '').trim();
+      }
+
+      function normalizePersian(text) {
+        return (text || '')
+          .replace(/ي/g, 'ی')
+          .replace(/ك/g, 'ک')
+          .replace(/\u200c/g, ' ')
+          .toLowerCase();
+      }
+
+      function markdownToHtml(md) {
+        const lines = (md || '').split('\n');
+        let html = '';
+        let inList = false;
+        const fmt = (str) =>
+          str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+        lines.forEach((raw) => {
+          const line = raw.trim();
+          if (!line) {
+            if (inList) {
+              html += '</ul>';
+              inList = false;
+            }
+            return;
+          }
+          if (line.startsWith('### ')) {
+            if (inList) {
+              html += '</ul>';
+              inList = false;
+            }
+            html += '<h3>' + fmt(line.slice(4)) + '</h3>';
+          } else if (line.startsWith('- ') || line.startsWith('• ')) {
+            if (!inList) {
+              html += '<ul>';
+              inList = true;
+            }
+            html += '<li>' + fmt(line.slice(2)) + '</li>';
+          } else {
+            if (inList) {
+              html += '</ul>';
+              inList = false;
+            }
+            html += '<p>' + fmt(line) + '</p>';
+          }
+        });
+        if (inList) html += '</ul>';
+        return html;
+      }
+
+      function renderAudienceSelector() {
+        const container = document.getElementById('audience-selector');
+        container.innerHTML = '';
+        AUDIENCES.forEach((aud) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'audience-btn' + (state.audience === aud.id ? ' active' : '');
+          btn.innerHTML = `<span>${aud.title}</span><span class="audience-sub">${aud.subtitle}</span>`;
+          btn.addEventListener('click', () => {
+            state.audience = aud.id;
+            localStorage.setItem(STORAGE_KEY_AUDIENCE, aud.id);
+            renderAudienceSelector();
+            if (state.selectedAttraction) {
+              openDetailModal(state.selectedAttraction);
+            }
+          });
+          container.appendChild(btn);
+        });
+      }
+
+      function renderAttractions() {
+        const container = document.getElementById('attractions-list');
+        container.innerHTML = '';
+        LOCAL_DB.attractions.forEach((item) => {
+          const card = document.createElement('article');
+          card.className = 'attraction-card';
+          card.innerHTML = `
+            <div class="attraction-media">
+              <img src="${item.imagePath}" alt="${item.title}" loading="lazy" />
+              <div class="attraction-overlay">
+                <span class="era-tag">${item.era}</span>
+                <div>
+                  <div style="font-size: 18px; font-weight: 700;">${item.title}</div>
+                  <div style="font-size: 12px; opacity: 0.9;">${item.subtitle}</div>
+                </div>
+              </div>
+            </div>
+            <div class="attraction-body">
+              <p>${item.shortDescription}</p>
+              <div class="tags-row">
+                ${(item.quickTags || []).map((t) => `<span class="tag-chip">${t}</span>`).join('')}
+              </div>
+              <div class="card-footer">
+                <span class="meta-text">${item.visitingDuration} • ${item.locationNote}</span>
+                <button type="button" class="primary-btn">معرفی هوشمند</button>
+              </div>
+            </div>
+          `;
+          card.addEventListener('click', () => openDetailModal(item));
+          container.appendChild(card);
+        });
+      }
+
+      function openDetailModal(item) {
+        state.selectedAttraction = item;
+        document.getElementById('detail-title').textContent = item.title;
+        const img = document.getElementById('detail-image');
+        img.src = item.imagePath;
+        img.alt = item.title;
+        document.getElementById('detail-meta').textContent = `${item.era} • ${item.visitingDuration} • ${item.locationNote}`;
+        const noticeEl = document.getElementById('detail-notice');
+        noticeEl.classList.add('hidden');
+        const guideText = (item.guides && item.guides[state.audience]) || item.shortDescription;
+        document.getElementById('detail-content').innerHTML = markdownToHtml(guideText);
+        document.getElementById('detail-modal').classList.remove('hidden');
+      }
+
+      document.getElementById('close-detail-btn').addEventListener('click', () => {
+        state.selectedAttraction = null;
+        document.getElementById('detail-modal').classList.add('hidden');
+      });
+
+      document.getElementById('detail-ask-btn').addEventListener('click', () => {
+        if (!state.selectedAttraction) return;
+        const q = state.selectedAttraction.suggestedQuestion;
+        document.getElementById('detail-modal').classList.add('hidden');
+        switchTab('guide');
+        sendChat(q);
+      });
+
+      document.getElementById('detail-ai-btn').addEventListener('click', async () => {
+        if (!state.selectedAttraction) return;
+        const noticeEl = document.getElementById('detail-notice');
+        const contentEl = document.getElementById('detail-content');
+        const key = getApiKey();
+        if (!key) {
+          noticeEl.textContent = 'کلید OpenAI تنظیم نشده است؛ معرفی کامل از دانشنامه محلی نمایش داده می‌شود.';
+          noticeEl.classList.remove('hidden');
+          return;
+        }
+        noticeEl.textContent = 'در حال دریافت معرفی تکمیلی از OpenAI...';
+        noticeEl.classList.remove('hidden');
+        const audObj = AUDIENCES.find((a) => a.id === state.audience) || AUDIENCES[0];
         try {
-          navigator.serviceWorker
-            .register('./service-worker.js', { scope: './' })
-            .catch(function (err) {
-              console.warn('Service Worker registration skipped:', err);
-            });
-        } catch (err) {
-          console.warn('Service Worker unavailable:', err);
+          const reply = await callOpenAi(
+            key,
+            [
+              {
+                role: 'system',
+                content: `تو راهنمای گردشگری و میراث فرهنگی سلطانیه هستی. ${audObj.directive} فقط اطلاعات مستند تاریخی و معماری ارائه بده.`
+              },
+              {
+                role: 'user',
+                content: `درباره «${state.selectedAttraction.title}» (${state.selectedAttraction.era}) معرفی و نکات بازدید در سه بخش (### معرفی و پیشینه تاریخی، ### شاخصه‌های معماری و هنری، ### نکات طلایی بازدید) بنویس.`
+              }
+            ],
+            0.35
+          );
+          noticeEl.textContent = 'تکمیل‌شده با هوش مصنوعی OpenAI';
+          contentEl.innerHTML = markdownToHtml(reply);
+        } catch (_) {
+          noticeEl.textContent = 'دسترسی به سرویس OpenAI در این شبکه محدود یا کلید نامعتبر بود؛ معرفی کامل از دانشنامه محلی نمایش داده می‌شود.';
         }
       });
-    }
+
+      function switchTab(tab) {
+        state.activeTab = tab;
+        ['explore', 'identifier', 'guide'].forEach((t) => {
+          document.getElementById('tab-' + t).classList.toggle('hidden', t !== tab);
+        });
+        document.querySelectorAll('.nav-item').forEach((btn) => {
+          btn.classList.toggle('active', btn.dataset.tab === tab);
+        });
+      }
+
+      document.querySelectorAll('.nav-item').forEach((btn) => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+      });
+
+      // OpenAI REST call with AbortController timeout (never blocks or freezes UI)
+      async function callOpenAi(apiKey, messages, temperature) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 25000);
+        try {
+          const res = await fetch(OPENAI_ENDPOINT, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + apiKey
+            },
+            body: JSON.stringify({
+              model: OPENAI_MODEL,
+              messages: messages,
+              temperature: temperature
+            }),
+            signal: controller.signal
+          });
+          if (!res.ok) {
+            throw new Error('HTTP ' + res.status);
+          }
+          const data = await res.json();
+          const text = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+          if (!text) throw new Error('Empty reply');
+          return text;
+        } finally {
+          clearTimeout(timer);
+        }
+      }
+
+      // Local Offline Chat Fallback
+      function findOfflineChatReply(question) {
+        const norm = normalizePersian(question);
+        let bestFaq = null;
+        let bestScore = 0;
+        LOCAL_DB.faqs.forEach((faq) => {
+          let score = 0;
+          (faq.keywords || []).forEach((kw) => {
+            if (norm.includes(normalizePersian(kw))) score += 2;
+          });
+          if (score > bestScore) {
+            bestScore = score;
+            bestFaq = faq;
+          }
+        });
+        if (bestFaq && bestScore > 0) {
+          return bestFaq.answers[state.audience] || bestFaq.answers.general;
+        }
+        const matchedAttraction = LOCAL_DB.attractions.find((a) =>
+          norm.includes(normalizePersian(a.title.split(' ')[0])) ||
+          norm.includes(normalizePersian(a.title))
+        );
+        if (matchedAttraction) {
+          return matchedAttraction.guides[state.audience] || matchedAttraction.shortDescription;
+        }
+        return (
+          'در حالت آفلاین می‌توانید درباره **گنبد سلطانیه**، **معبد داش‌کسن**، **آرامگاه چلبی‌اوغلی**، **معماری ایلخانی** یا **بهترین مسیر بازدید** بپرسید.\n\n' +
+          LOCAL_DB.faqs[0].answers[state.audience]
+        );
+      }
+
+      function renderQuickSuggestions() {
+        const wrap = document.getElementById('quick-suggestions');
+        wrap.innerHTML = '';
+        LOCAL_DB.faqs.slice(0, 4).forEach((faq) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'suggestion-chip';
+          btn.textContent = faq.question;
+          btn.addEventListener('click', () => sendChat(faq.question));
+          wrap.appendChild(btn);
+        });
+      }
+
+      function renderChat() {
+        const wrap = document.getElementById('chat-messages');
+        wrap.innerHTML = '';
+        state.chatMessages.forEach((msg) => {
+          const div = document.createElement('div');
+          div.className = 'chat-bubble ' + (msg.isUser ? 'chat-user' : 'chat-bot');
+          if (msg.isUser) {
+            div.textContent = msg.text;
+          } else {
+            const badge = msg.isOffline
+              ? '<div style="font-size:11px;color:#8c6313;font-weight:700;margin-bottom:4px;">پاسخ از دانشنامه آفلاین</div>'
+              : '';
+            div.innerHTML = badge + '<div class="markdown-output">' + markdownToHtml(msg.text) + '</div>';
+          }
+          wrap.appendChild(div);
+        });
+      }
+
+      async function sendChat(rawText) {
+        const text = (rawText || '').trim();
+        if (!text || state.isStreamingChat) return;
+
+        state.chatMessages.push({ isUser: true, text });
+        state.chatMessages.push({ isUser: false, text: 'در حال جستجو در منابع تاریخی...', isOffline: false });
+        state.isStreamingChat = true;
+        renderChat();
+
+        const key = getApiKey();
+        const audObj = AUDIENCES.find((a) => a.id === state.audience) || AUDIENCES[0];
+
+        if (!key || !navigator.onLine) {
+          const notice = !navigator.onLine
+            ? 'اتصال اینترنت برقرار نیست؛ این پاسخ از دانشنامه آفلاین سلطانیه ارائه شده است:'
+            : 'کلید OpenAI وارد نشده است (از دکمه تنظیمات OpenAI بالای صفحه می‌توانید کلید بگذارید)؛ پاسخ از دانشنامه محلی:';
+          state.chatMessages[state.chatMessages.length - 1] = {
+            isUser: false,
+            text: notice + '\n\n' + findOfflineChatReply(text),
+            isOffline: true
+          };
+          state.isStreamingChat = false;
+          renderChat();
+          return;
+        }
+
+        try {
+          const history = state.chatMessages
+            .slice(1, -2)
+            .slice(-8)
+            .map((m) => ({ role: m.isUser ? 'user' : 'assistant', content: m.text }));
+          const reply = await callOpenAi(
+            key,
+            [
+              {
+                role: 'system',
+                content: `تو راهنمای هوشمند گردشگری و میراث فرهنگی سلطانیه هستی. ${audObj.directive} فقط در حوزه تاریخ، معماری و گردشگری سلطانیه و ایران پاسخ مستند بده.`
+              },
+              ...history,
+              { role: 'user', content: text }
+            ],
+            0.4
+          );
+          state.chatMessages[state.chatMessages.length - 1] = {
+            isUser: false,
+            text: reply,
+            isOffline: false
+          };
+        } catch (_) {
+          state.chatMessages[state.chatMessages.length - 1] = {
+            isUser: false,
+            text: 'دسترسی به سرویس OpenAI در این شبکه محدود یا زمان‌بر شد؛ پاسخ زیر از پایگاه داده محلی سلطانیه آماده شده است:\n\n' + findOfflineChatReply(text),
+            isOffline: true
+          };
+        } finally {
+          state.isStreamingChat = false;
+          renderChat();
+        }
+      }
+
+      document.getElementById('send-chat-btn').addEventListener('click', () => {
+        const input = document.getElementById('chat-input');
+        const val = input.value;
+        if (!val.trim()) return;
+        input.value = '';
+        sendChat(val);
+      });
+
+      document.getElementById('reset-chat-btn').addEventListener('click', () => {
+        state.chatMessages = [state.chatMessages[0]];
+        state.isStreamingChat = false;
+        renderChat();
+      });
+
+      // Image Picker & Base64 Vision Analysis
+      function handleFileSelected(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const maxDim = 1024;
+            let w = img.width;
+            let h = img.height;
+            if (Math.max(w, h) > maxDim) {
+              const scale = maxDim / Math.max(w, h);
+              w = Math.round(w * scale);
+              h = Math.round(h * scale);
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            state.selectedImageDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+            document.getElementById('image-preview').src = state.selectedImageDataUrl;
+            document.getElementById('image-preview-wrap').classList.remove('hidden');
+            document.getElementById('analysis-result-card').classList.add('hidden');
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      document.getElementById('image-file-input').addEventListener('change', (e) => handleFileSelected(e.target.files[0]));
+      document.getElementById('image-camera-input').addEventListener('change', (e) => handleFileSelected(e.target.files[0]));
+
+      document.getElementById('clear-image-btn').addEventListener('click', () => {
+        state.selectedImageDataUrl = '';
+        document.getElementById('image-note-input').value = '';
+        document.getElementById('image-preview-wrap').classList.add('hidden');
+        document.getElementById('analysis-result-card').classList.add('hidden');
+      });
+
+      document.getElementById('analyze-image-btn').addEventListener('click', async () => {
+        if (!state.selectedImageDataUrl) return;
+        const resultCard = document.getElementById('analysis-result-card');
+        const note = document.getElementById('image-note-input').value.trim();
+        const key = getApiKey();
+        const audObj = AUDIENCES.find((a) => a.id === state.audience) || AUDIENCES[0];
+
+        resultCard.classList.remove('hidden');
+        resultCard.innerHTML = '<p style="margin:0;color:var(--teal);">در حال تحلیل تصویر اثر...</p>';
+
+        const offlineGuide = (LOCAL_DB.visionOfflineGuide && LOCAL_DB.visionOfflineGuide[state.audience]) || '';
+
+        if (!key || !navigator.onLine) {
+          resultCard.innerHTML =
+            '<div class="notice-box" style="margin-bottom:10px;">' +
+            (!navigator.onLine
+              ? 'اتصال اینترنت برقرار نیست؛ راهنمای آفلاین تشخیص آثار نمایش داده می‌شود.'
+              : 'کلید OpenAI تنظیم نشده است؛ برای تحلیل آنلاین کلید خود را در تنظیمات وارد کنید یا از راهنمای محلی زیر استفاده نمایید.') +
+            '</div><div class="markdown-output">' +
+            markdownToHtml(offlineGuide) +
+            '</div>';
+          return;
+        }
+
+        try {
+          const reply = await callOpenAi(
+            key,
+            [
+              {
+                role: 'system',
+                content: `تو شناساگر هوشمند آثار تاریخی سلطانیه و ایران هستی. ${audObj.directive} اگر تصویر مربوط به بناهای تاریخی، کاشی‌کاری، کتیبه یا میراث فرهنگی نبود با احترام اعلام کن که تصویر نامرتبط است.`
+              },
+              {
+                role: 'user',
+                content: [
+                  {
+                    type: 'text',
+                    text: (note ? 'توضیح کاربر: ' + note + '\n' : '') + 'نوع بنا یا اثر، دوره تاریخی، ویژگی‌های معماری و جزئیات هنری این تصویر را توضیح بده.'
+                  },
+                  {
+                    type: 'image_url',
+                    image_url: { url: state.selectedImageDataUrl }
+                  }
+                ]
+              }
+            ],
+            0.3
+          );
+          resultCard.innerHTML = '<h3 class="section-title">نتیجه تحلیل هوشمند</h3><div class="markdown-output">' + markdownToHtml(reply) + '</div>';
+        } catch (_) {
+          resultCard.innerHTML =
+            '<div class="notice-box" style="margin-bottom:10px;">دسترسی به سرویس تحلیل تصویر OpenAI در این شبکه محدود یا با خطا مواجه شد؛ راهنمای محلی شناخت آثار در دسترس شماست:</div><div class="markdown-output">' +
+            markdownToHtml(offlineGuide) +
+            '</div>';
+        }
+      });
+
+      // Settings Modal
+      const settingsModal = document.getElementById('settings-modal');
+      const keyInput = document.getElementById('openai-key-input');
+      document.getElementById('open-settings-btn').addEventListener('click', () => {
+        keyInput.value = getApiKey();
+        settingsModal.classList.remove('hidden');
+      });
+      document.getElementById('close-settings-btn').addEventListener('click', () => settingsModal.classList.add('hidden'));
+      document.getElementById('save-key-btn').addEventListener('click', () => {
+        const val = keyInput.value.trim();
+        if (val) localStorage.setItem(STORAGE_KEY_API, val);
+        else localStorage.removeItem(STORAGE_KEY_API);
+        settingsModal.classList.add('hidden');
+      });
+      document.getElementById('clear-key-btn').addEventListener('click', () => {
+        localStorage.removeItem(STORAGE_KEY_API);
+        keyInput.value = '';
+        settingsModal.classList.add('hidden');
+      });
+
+      // Persian Typing Test Modal
+      const typingModal = document.getElementById('typing-modal');
+      const typingInput = document.getElementById('typing-test-input');
+      const typingPreview = document.getElementById('typing-preview');
+      const SAMPLE_FA = 'پژواک گچ‌کاری و کاشیکاری فیروزه‌ای سلطانیه ۱۲۳';
+
+      document.getElementById('open-typing-test-btn').addEventListener('click', () => {
+        typingModal.classList.remove('hidden');
+        setTimeout(() => typingInput.focus(), 50);
+      });
+      document.getElementById('close-typing-btn').addEventListener('click', () => typingModal.classList.add('hidden'));
+      typingInput.addEventListener('input', () => {
+        typingPreview.textContent = typingInput.value ? 'پیش‌نمایش: ' + typingInput.value : '';
+      });
+      document.getElementById('insert-sample-fa-btn').addEventListener('click', () => {
+        typingInput.value = SAMPLE_FA;
+        typingPreview.textContent = 'پیش‌نمایش: ' + SAMPLE_FA;
+      });
+      document.getElementById('use-in-chat-btn').addEventListener('click', () => {
+        const text = typingInput.value.trim() || SAMPLE_FA;
+        typingModal.classList.add('hidden');
+        switchTab('guide');
+        document.getElementById('chat-input').value = text;
+      });
+
+      // Initial instantaneous UI render (zero network wait)
+      renderAudienceSelector();
+      renderAttractions();
+      renderQuickSuggestions();
+      renderChat();
+
+      // Non-blocking Service Worker registration
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          try {
+            navigator.serviceWorker
+              .register('./service-worker.js', { scope: './' })
+              .catch(() => {});
+          } catch (_) {}
+        });
+      }
+    })();
   </script>
 </body>
 </html>
